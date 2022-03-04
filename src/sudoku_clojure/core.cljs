@@ -14,12 +14,49 @@
 (defn get-app-element []
   (gdom/getElement "app"))
 
-(defn hello-world []
+(defn main []
   [:div
    [:p (:text @app-state)]])
 
+;; solve :: Grid -> [Grid]
+;; (defn solve grid = filter valid . expand . choices grid)
+
+(def b2 [[1 2 4 3] [3 4 2 1] [2 1 3 4] [4 0 1 2]])
+
+;; cp :: [[a]] -> [[a]]
+
+(def digits (range 1 10))
+
+
+
+(defn choice [d] (if (zero? d) digits [d]))
+
+;; choices :: Grid -> Matrix [Digit]
+(def choices (partial map (partial map choice)))
+;; (choices b2)
+
+;; cp :: [[a]] -> [[a]]
+(defn cp [matrix]
+  (if (empty? matrix) [[]]
+      (for [x (first matrix) ys (cp (rest matrix))]
+        (cons x ys))))
+
+
+;; expand :: Matrix [Digit] -> [Grid]
+
+;; expand = cp . map cp
+;; compose haskell-style; last one is partial for point-free
+;; (def expand (comp cp (partial map cp)))
+(def expand #(->> % (map cp) cp))
+
+;; alternates
+;; (defn expand_2 [digit-matrix] (->> digit-matrix (map cp) cp))
+;; (defn expand_3 [dm] (map #(map cp %) dm))
+
+
+
 (defn mount [el]
-  (rdom/render [hello-world] el))
+  (rdom/render [main] el))
 
 (defn mount-app-element []
   (when-let [el (get-app-element)]
@@ -35,4 +72,4 @@
   ;; optionally touch your app-state to force rerendering depending on
   ;; your application
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
-)
+  )
