@@ -21,7 +21,12 @@
 ;; solve :: Grid -> [Grid]
 ;; (defn solve grid = filter valid . expand . choices grid)
 
+(def boxsize 1)
+
 (def b2 [[1 2 4 3] [3 4 2 1] [2 1 3 4] [4 0 1 2]])
+(def b4 [[1 2] [3 4]])
+(def b5 [[1 2 3]  [4 5 6]  [7 8 9]])
+
 
 ;; cp :: [[a]] -> [[a]]
 
@@ -43,7 +48,6 @@
 
 
 ;; expand :: Matrix [Digit] -> [Grid]
-
 ;; expand = cp . map cp
 ;; compose haskell-style; last one is partial for point-free
 ;; (def expand (comp cp (partial map cp)))
@@ -52,6 +56,48 @@
 ;; alternates
 ;; (defn expand_2 [digit-matrix] (->> digit-matrix (map cp) cp))
 ;; (defn expand_3 [dm] (map #(map cp %) dm))
+
+
+;; valid :: Grid -> Bool
+;; valid g = all nodups (rows g) &&
+;; all nodups (cols g) &&
+;; all nodups (boxs g)
+
+;; nodups :: (Eq a) => [a] -> Bool
+;; nodups [] = True
+;; nodups (x:xs) = all (/=x) xs && nodups xs
+
+;; rows :: Matrix a -> Matrix a
+;; rows = id
+(def rows #(identity %))
+;; (def rows (partial identity))
+;; (defn rows [x] (identity x))
+
+;; cols :: Matrix a -> Matrix a
+;; cols [xs] = [[x] | x <- xs]
+;; cols (xs:xss) = zipWith (:) xs (cols xss)
+(defn cols [m] (apply map vector m))
+
+;; group :: [a] -> [[a]]
+;; group [] = []
+;; -- group xs = take 3 xs:group (drop 3 xs)
+;; group xs = take (fromInteger boxsize) xs:group (drop (fromInteger boxsize) xs)
+(defn group [xs] (if (nil? xs) [] (partition boxsize xs)))
+(defn group2 [xs] (map #(let [size (/ (count %) 2)] partition size %) xs))
+;; (defn group3 [xs] (partition 2 %)
+
+;; ungroup :: [[a]] -> [a]
+;; ungroup = concat
+(def ungroup (partial apply concat))
+
+;; boxs :: Matrix a -> Matrix a
+;; boxs = map ungroup . ungroup . map cols . group . map group
+(defn boxs [m] (->> m
+                    (map group)
+                    group
+                    (map cols)
+                    ungroup
+                    (map ungroup)))
 
 
 
@@ -73,3 +119,6 @@
   ;; your application
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
   )
+
+
+
