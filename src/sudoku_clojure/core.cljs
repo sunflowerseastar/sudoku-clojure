@@ -18,12 +18,28 @@
   [:div
    [:p (:text @app-state)]])
 
-;; solve :: Grid -> [Grid]
-;; (defn solve grid = filter valid . expand . choices grid)
+(def boxsize 3)
 
-(def boxsize 1)
-
+(def b1 [[0 9 0 0 0 0 0 4 0]
+         [0 6 4 2 0 5 7 8 0]
+         [0 0 8 0 4 0 9 0 0]
+         [4 8 3 0 6 0 2 5 1]
+         [9 0 0 0 0 0 0 0 7]
+         [2 5 7 0 8 0 4 6 9]
+         [0 0 9 0 1 0 5 0 0]
+         [0 3 1 8 0 2 6 9 0]
+         [0 4 0 0 0 0 0 1 0]])
 (def b2 [[1 2 4 3] [3 4 2 1] [2 1 3 4] [4 0 1 2]])
+;; https://www.7sudoku.com/images/examples/solved_puzzle.png
+(def b3 [[8 2 7 1 5 4 3 9 6]
+         [9 6 5 3 2 7 1 4 8]
+         [3 4 1 6 8 9 7 5 2]
+         [5 9 3 4 6 8 2 7 1]
+         [4 7 2 5 1 3 6 8 9]
+         [6 1 8 9 7 2 4 3 5]
+         [7 8 6 2 3 5 9 1 4]
+         [1 5 4 7 9 6 8 2 3]
+         [2 3 9 8 4 1 5 6 0]]) ;; 0 => 7
 (def b4 [[1 2] [3 4]])
 (def b5 [[1 2 3]  [4 5 6]  [7 8 9]])
 
@@ -106,6 +122,17 @@
   (and (every? nodups (rows g))
        (every? nodups (rows g))
        (every? nodups (rows g))))
+
+
+;; solve :: Grid -> [Grid]
+;; solve grid = filter valid . expand . choices grid
+(defn solve [grid]
+  (->> grid
+       choices
+       expand
+       (filter valid)))
+
+
 
 
 
