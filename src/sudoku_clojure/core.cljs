@@ -57,16 +57,6 @@
 ;; (defn expand_2 [digit-matrix] (->> digit-matrix (map cp) cp))
 ;; (defn expand_3 [dm] (map #(map cp %) dm))
 
-
-;; valid :: Grid -> Bool
-;; valid g = all nodups (rows g) &&
-;; all nodups (cols g) &&
-;; all nodups (boxs g)
-
-;; nodups :: (Eq a) => [a] -> Bool
-;; nodups [] = True
-;; nodups (x:xs) = all (/=x) xs && nodups xs
-
 ;; rows :: Matrix a -> Matrix a
 ;; rows = id
 (def rows #(identity %))
@@ -99,6 +89,24 @@
                     ungroup
                     (map ungroup)))
 
+;; nodups :: (Eq a) => [a] -> Bool
+;; nodups [] = True
+;; nodups (x:xs) = all (/=x) xs && nodups xs
+(defn nodups [xs]
+  (if (empty? xs) true
+      (and (not-any? #(== (first xs) %) (rest xs))
+           (nodups (rest xs)))))
+
+;; TODO do valid, then check naive solve with small boards
+;; valid :: Grid -> Bool
+;; valid g = all nodups (rows g) &&
+;; all nodups (cols g) &&
+;; all nodups (boxs g)
+(defn valid [g]
+  (and (every? nodups (rows g))
+       (every? nodups (rows g))
+       (every? nodups (rows g))))
+
 
 
 (defn mount [el]
@@ -119,6 +127,3 @@
   ;; your application
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
   )
-
-
-
