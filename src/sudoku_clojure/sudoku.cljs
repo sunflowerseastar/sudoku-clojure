@@ -162,3 +162,47 @@
 (defn solve [grid] (->> grid choices (many prune) expand (filter valid)))
 
 ;; TODO wire into interface
+;; TODO add single | expand1 | counts | complete | safe | ok | extract | solve | search
+
+;; single :: [a] -> Bool
+;; single [_] = True
+;; single _ = False
+(defn single [x] (= (count x) 1))
+
+;; -- prelude
+;; -- break :: (a -> Bool) -> [a] -> ([a],[a])
+;; -- break p = span (not . p)
+;; (break even? [1 3 7 6 2 3 5]) => ([1 3 7] [6 2 3 5])
+;; >>> span (< 3) [1,2,3,4,1,2,3,4] => ([1,2],[3,4,1,2,3,4])
+;; >>> span (< 9) [1,2,3] => ([1,2,3],[])
+;; >>> span (< 0) [1,2,3] => ([],[1,2,3])
+(defn span [p xs]
+  (loop [[x & tail :as xs] xs acc []]
+    (if (p x) (recur tail (conj acc x))
+        [acc xs])))
+
+(defn break [p xs] (span (comp not p) xs))
+
+;; counts = filter (/= 1) . map length . concat
+(defn counts [xs] (->> xs
+                       (map (partial map count))
+                       flatten
+                       (filter #(not= 1 %))
+                       ;; (apply min)
+                       ))
+
+;; expand1 :: Matrix [Digit] -> [Matrix [Digit]]
+;; expand1 rows
+;; = [rows1 ++ [row1 ++ [c]:row2] ++ rows2 | c <- cs]
+;;   where
+;;   (rows1, row:rows2) = break (any smallest) rows
+;;   (row1, cs:row2)    = break smallest row
+;;   smallest cs        = length cs == n
+;;   n                  = minimum (counts rows)
+(defn expand1 [rows]
+  (let [n (apply min (counts rows))
+        [rows1 [row & rows2]] (break (fn [xs] (some #(= (count %) n) xs)) rows)
+        [row1 [cs & row2]] (break #(= (count %) n) row)]
+    (for [c cs] (concat rows1 [(concat row1 (cons [c] row2))] rows2))))
+
+(def x (->> b1 choices prune))
