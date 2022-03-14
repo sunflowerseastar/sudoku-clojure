@@ -136,7 +136,7 @@
 ;; -- remove the row's singletons ("fixed" entries) from the row's lists
 ;; pruneRow :: Row [Digit] -> Row [Digit]
 ;; pruneRow row = map (remove fixed) row
-;; where fixed = [d | [d] <- row]
+;;   where fixed = [d | [d] <- row]
 (defn prune-row [row]
   (let [fixed (for [[d :as ds] row :when (= (count ds) 1)] d)]
     (map #(remove-fixed fixed %) row)))
@@ -159,15 +159,10 @@
 
 ;; solve :: Grid -> [Grid]
 ;; solve grid = filter valid . expand . choices grid
-(defn solve [grid] (->> grid choices (many prune) expand (filter valid)))
+;; (defn solve [grid] (->> grid choices (many prune) expand (filter valid)))
 
 ;; TODO wire into interface
 ;; TODO add single | expand1 | counts | complete | safe | ok | extract | solve | search
-
-;; single :: [a] -> Bool
-;; single [_] = True
-;; single _ = False
-(defn single [x] (= (count x) 1))
 
 ;; -- prelude
 ;; -- break :: (a -> Bool) -> [a] -> ([a],[a])
@@ -206,3 +201,42 @@
     (for [c cs] (concat rows1 [(concat row1 (cons [c] row2))] rows2))))
 
 (def x (->> b1 choices prune))
+
+;; single :: [a] -> Bool
+;; single [_] = True
+;; single _ = False
+(defn single [x] (= (count x) 1))
+
+;; complete :: Matrix [Digit] -> Bool
+;; complete = all (all single)
+(defn complete [matrix] (every? #(every? single %) matrix))
+
+;; ok row = nodups [x | [x] <- row]
+(defn ok [row] (nodups (for [[x :as xs] row :when (= (count xs) 1)] x)))
+
+;; safe :: Matrix [Digit] -> Bool
+;; safe cm = all ok (rows cm) &&
+;;   all ok (cols cm) &&
+;;   all ok (boxs cm)
+(defn safe [cm] (and (every? ok (rows cm))
+                     (every? ok (cols cm))
+                     (every? ok (boxs cm))))
+
+;; extract :: Matrix [Digit] -> Grid
+;; extract = map (map head)
+(defn extract [matrix] (map #(map first %) matrix))
+
+;; search cm
+;;   | not (safe pm) = []
+;;   | complete pm = [extract pm]
+;;   | otherwise = concat (map search (expand1 pm))
+;;     where pm = prune cm
+(defn search [cm]
+  (let [pm (prune cm)]
+    (cond (not (safe pm)) []
+          (complete pm) [(extract pm)]
+          :else (apply concat (map search (expand1 pm))))))
+
+;; solve :: Grid -> [Grid]
+;; solve = search . choices
+(defn solve [grid] (-> grid choices search))
