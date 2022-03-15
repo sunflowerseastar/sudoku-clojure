@@ -130,6 +130,9 @@ body {
   height: 90vw;
   margin: 0 auto;
   text-align: center;
+  background: #222;
+  grid-gap: 1px;
+  border: 1px solid #222;
 }
 .constrain-width {
   width: 100%;
@@ -162,162 +165,22 @@ body {
   padding-bottom: 100%;
   border-right: 1px solid transparent;
   border-bottom: 1px solid transparent;
-}
-.square.board-edge-bottom {
-  border-bottom: 1px solid #222 !important;
-}
-.square.board-edge-right {
-  border-right: 1px solid #222 !important;
-}
-.square.black {
-  background: #222;
-}
-.square.entry {
   background: white;
-  border-bottom: 0;
-  border-right: 1px solid #ddd;
 }
-@media (min-width: 400px) {
-  .square.entry {
-    border-bottom: 1px solid #ddd;
-  }
-}
-.entry-inner {
+input {
+  width: 90%;
+  height: 100%;
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-size: 1.1em;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-.board-edge-bottom .entry-inner {
-  border-bottom: 0;
-}
-.entry-inner {
-  font-family: 'Proxima Nova', 'San Francisco', 'Helvetica Neue', Helvetica,
-    Arial, sans-serif;
-  font-size: 1.25em;
-  border-bottom: 0;
-}
-@media (min-width: 768px) {
-  .entry-inner {
-    font-size: 1.5em;
-  }
-}
-@media (min-width: 1200px) {
-  .entry-inner {
-    /* font-size: 1.6em; */
-  }
-}
-@media (min-width: 1400px) {
-  .entry-inner {
-    font-size: 1.6em;
-  }
-}
-@media (min-width: 1800px) {
-  .entry-inner {
-    font-size: 1.8em;
-  }
-}
-.square.clue {
-  position: relative;
-  background: #222;
-  color: white;
-  border-right: 1px solid #3b3b3b;
-  border-bottom: 1px solid #3b3b3b;
-  overflow: hidden;
-}
-.square.clue:before,
-.square.clue:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  border-left: 100vh solid transparent;
-  border-right: 100vh solid transparent;
-}
-.square.clue:before {
-  left: 0;
-  border-top: 100vh solid #666;
-}
-.square.clue:after {
-  left: 1px;
-  border-top: 100vh solid #222;
-}
-.clue-input {
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  padding: 0;
-  font-family: 'Proxima Nova', 'San Francisco', 'Helvetica Neue', Helvetica,
-    Arial, sans-serif;
-  color: white;
-  text-align: center;
-  background: transparent;
   border: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  background: none;
   border-radius: 0;
-  z-index: 1;
-
-  /* "base" font-size is in div.square's markup, */
-  /* this is a "multiplier," sorta =) */
-  font-size: 0.9em;
+  outline: none;
 }
-@media (min-width: 400px) {
-  .clue-input {
-    font-size: 1em;
-  }
-}
-@media (min-width: 500px) {
-  .clue-input {
-    font-size: 1.06em;
-  }
-}
-@media (min-width: 768px) {
-  .clue-input {
-    font-size: 1.1em;
-  }
-}
-@media (min-width: 1200px) {
-  .clue-input {
-    font-size: 1.18em;
-  }
-}
-@media (min-width: 1400px) {
-  .clue-input {
-    font-size: 1.24em;
-  }
-}
-@media (min-width: 1800px) {
-  .clue-input {
-    font-size: 1.4em;
-  }
-}
-.clue-input.down {
-  bottom: -2px;
-  left: 2px;
-}
-.clue-input.right {
-  right: 0;
-  top: 1px;
-}
-.clue-input.down.hide-down,
-.clue-input.right.hide-right {
-  opacity: 0;
-}
-.clue-input.down.hide-down:focus,
-.clue-input.right.hide-right:focus {
-  opacity: 1;
-}
-.clue-input.down.exclude-down,
-.clue-input.right.exclude-right {
-  display: none;
+input[type=text]:focus {
+  box-shadow: none;
+  border: 0;
 }
 
 .button-container {
@@ -361,7 +224,7 @@ body {
 .button-indicator.is-timeout button,
 .button-indicator.is-no-solution button,
 .button-indicator.is-success button {
-  top: 0px !important;
+  top: 0px;
 }
 .button-indicator.is-requesting button {
   background: #333;
