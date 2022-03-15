@@ -56,10 +56,17 @@
 (defn previous-or-next-solution! [dec-or-inc]
   (println "previous-or-next-solution!"))
 
+(defn update-sum-fn! [x y e]
+  (let [new-value (-> e .-target .-value js/parseInt)]
+    (do
+      ;;(clear!)
+      (swap! board assoc-in [y x] new-value))))
+
 (defn square-c [x y square]
   [:div.square
    {:style {:grid-column (+ x 1) :grid-row (+ y 1)}}
-   [:p (when (not (zero? square)) square)]])
+   [:input {:default-value (when (not (zero? square)) square)
+            :on-change #(update-sum-fn! x y %)}]])
 
 (defn main []
   (create-class
