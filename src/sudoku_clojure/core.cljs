@@ -9,10 +9,6 @@
 (defn get-app-element []
   (gdom/getElement "app"))
 
-;; TODO set up a basic sudoku board in the DOM
-;; TODO connect a basic board data structure with the DOM board
-;; TODO think through next steps
-
 (def current-board-index (atom 0))
 (def is-board-modified (atom false))
 (def board (atom (nth boards @current-board-index)))
@@ -51,10 +47,25 @@
       (clear-board!)))
 
 (defn previous-or-next-board! [dec-or-inc]
-  (println "previous-or-next-board!"))
+  (let [new-board-index (mod (dec-or-inc @current-board-index) (count boards))]
+    (do ;; (clear-ui!)
+      ;; TODO clear answers when changing boards
+      ;; (clear-board!)
+      (reset! current-board-index new-board-index)
+      (reset! board (nth boards new-board-index))
+      (reset! is-board-modified false))))
 
 (defn previous-or-next-solution! [dec-or-inc]
   (println "previous-or-next-solution!"))
+
+(defn solve! []
+  (do (reset! is-requesting true)
+      (if-let [new-solutions (solve @board)]
+        (do (reset! is-requesting false)
+            (reset! solutions new-solutions)
+            (reset! board (first new-solutions)))
+        (do (reset! is-requesting false)
+            (println "no solutions")))))
 
 (defn update-sum-fn! [x y e]
   (let [new-value (-> e .-target .-value js/parseInt)]
@@ -110,7 +121,7 @@
          [:button {:on-click #(when (and (false? @is-success)
                                          (false? @is-no-solution)
                                          (false? @is-requesting))
-                                (println "stub: request solution"))}
+                                (solve!))}
           "solve"]]]])}))
 
 
