@@ -6,10 +6,6 @@
    [sudoku-clojure.boards :refer [boards]]
    [sudoku-clojure.sudoku :refer [solve]]))
 
-(println "hi" boards)
-
-(defn multiply [a b] (+ a b))
-
 (defn get-app-element []
   (gdom/getElement "app"))
 
