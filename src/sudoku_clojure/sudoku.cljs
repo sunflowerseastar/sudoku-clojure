@@ -80,9 +80,6 @@
 ;; -- group xs = take 3 xs:group (drop 3 xs)
 ;; group xs = take (fromInteger boxsize) xs:group (drop (fromInteger boxsize) xs)
 (defn group [xs] (partition boxsize xs))
-;; TODO confirm that (if (nil? xs) [] ...) isn't needed
-;; (defn group2..? [xs] (if (nil? xs) [] (partition boxsize xs)))
-;; (defn group3 [xs] (map #(let [size (/ (count %) 2)] partition size %) xs))
 
 ;; ungroup :: [[a]] -> [a]
 ;; ungroup = concat
@@ -90,16 +87,12 @@
 
 ;; boxs :: Matrix a -> Matrix a
 ;; boxs = map ungroup . ungroup . map cols . group . map group
-(defn boxs [m] (->> m
-                    (map group)
-                    group
-                    (map cols)
-                    ungroup
-                    (map ungroup)))
+(defn boxs [m] (->> m (map group) group (map cols) ungroup (map ungroup)))
 
 ;; nodups :: (Eq a) => [a] -> Bool
 ;; nodups [] = True
 ;; nodups (x:xs) = all (/=x) xs && nodups xs
+;; TODO write as a fold
 (defn nodups [xs]
   (if (empty? xs) true
       (and (not-any? #(== (first xs) %) (rest xs))
@@ -161,9 +154,6 @@
 ;; solve grid = filter valid . expand . choices grid
 ;; (defn solve [grid] (->> grid choices (many prune) expand (filter valid)))
 
-;; TODO wire into interface
-;; TODO add single | expand1 | counts | complete | safe | ok | extract | solve | search
-
 ;; -- prelude
 ;; -- break :: (a -> Bool) -> [a] -> ([a],[a])
 ;; -- break p = span (not . p)
@@ -187,13 +177,11 @@
                        ))
 
 ;; expand1 :: Matrix [Digit] -> [Matrix [Digit]]
-;; expand1 rows
-;; = [rows1 ++ [row1 ++ [c]:row2] ++ rows2 | c <- cs]
-;;   where
-;;   (rows1, row:rows2) = break (any smallest) rows
-;;   (row1, cs:row2)    = break smallest row
-;;   smallest cs        = length cs == n
-;;   n                  = minimum (counts rows)
+;; expand1 rows = [rows1 ++ [row1 ++ [c]:row2] ++ rows2 | c <- cs]
+;;   where (rows1, row:rows2) = break (any smallest) rows
+;;         (row1, cs:row2)    = break smallest row
+;;         smallest cs        = length cs == n
+;;         n                  = minimum (counts rows)
 (defn expand1 [rows]
   (let [n (apply min (counts rows))
         [rows1 [row & rows2]] (break (fn [xs] (some #(= (count %) n) xs)) rows)
