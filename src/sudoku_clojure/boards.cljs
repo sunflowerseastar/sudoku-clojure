@@ -49,5 +49,26 @@
 (def b4 [[1 2] [3 4]])
 (def b5 [[1 2 3]  [4 5 6]  [7 8 9]])
 
+;; https://lisperator.net/blog/javascript-sudoku-solver/#sec-bestest
+(def b6 [[0 0 0 8 0 1 0 0 0]
+         [0 0 0 0 0 0 0 4 3]
+         [5 0 0 0 0 0 0 0 0]
+         [0 0 0 0 7 0 8 0 0]
+         [0 0 0 0 0 0 1 0 0]
+         [0 2 0 0 3 0 0 0 0]
+         [6 0 0 0 0 0 0 7 5]
+         [0 0 3 4 0 0 0 0 0]
+         [0 0 0 2 0 0 6 0 0]])
+;; https://lisperator.net/blog/javascript-sudoku-solver/#sec-bestest
+(def b7 [[0 0 3 9 0 0 0 0 0]
+         [4 0 0 0 8 0 0 3 6]
+         [0 0 8 0 0 0 1 0 0]
+         [0 4 0 0 6 0 0 7 3]
+         [8 0 0 0 0 0 0 1 0]
+         [0 0 0 0 0 2 0 0 0]
+         [0 0 4 0 7 0 0 6 8]
+         [6 0 0 0 0 0 0 0 0]
+         [7 0 0 0 0 0 5 0 0]])
 
-(def boards [b1 b3 b3b broken-b3X2])
+
+(def boards [b1 b3 b3b b6 b7])
