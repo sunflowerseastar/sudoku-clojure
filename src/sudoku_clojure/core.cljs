@@ -17,67 +17,48 @@
 (def current-solution-index (atom 0))
 
 ;; ui
-(def is-requesting (atom false))
+(def is-solving (atom false))
 (def is-no-solution (atom false))
 (def is-success (atom false))
 (def has-initially-loaded (atom true))
 
 (defn clear-ui! []
-  (do
-    ;; (reset! is-requesting false)
-    ;; (reset! is-timeout false)
-    ;; (reset! is-no-solution false)
-    ;; (reset! is-success false)
-    ;; (reset! solutions '())
-    ;; (reset! current-solution-index 0)
-    ))
-
-(defn reset-board! [new-board]
-  (reset! board new-board))
-
-(defn clear-board! []
-  (let [clear-values (fn [squares] (->> squares (mapv #(assoc % :value nil))))]
-    (reset-board! (->> @board
-                       (map clear-values)
-                       vec))))
-
-(defn clear! []
-  (do (reset! is-board-modified true)
-      (clear-ui!)
-      (clear-board!)))
+  (do (reset! is-board-modified false)
+      (reset! is-solving false)
+      (reset! is-no-solution false)
+      (reset! solutions '())
+      (reset! current-solution-index 0)
+      (reset! is-success false)))
 
 (defn previous-or-next-board! [dec-or-inc]
   (let [new-board-index (mod (dec-or-inc @current-board-index) (count boards))]
-    (do ;; (clear-ui!)
-      ;; TODO clear answers when changing boards
-      ;; (clear-board!)
-      (reset! current-board-index new-board-index)
-      (reset! board (nth boards new-board-index))
-      (reset! is-board-modified false))))
+    (do (clear-ui!)
+        (reset! current-board-index new-board-index)
+        (reset! board (nth boards new-board-index)))))
 
 (defn previous-or-next-solution! [dec-or-inc]
-  (println "previous-or-next-solution!"))
+  (println "stub : previous-or-next-solution!"))
 
 (defn solve! []
-  (do (reset! is-requesting true)
-      (if-let [new-solutions (solve @board)]
-        (do (reset! is-requesting false)
-            (reset! solutions new-solutions)
-            (reset! board (first new-solutions)))
-        (do (reset! is-requesting false)
-            (println "no solutions")))))
+  (do (reset! is-solving true)
+      (let [new-solutions (solve @board)]
+        (do (reset! is-solving false)
+            (if (empty? new-solutions) (reset! is-no-solution true)
+                (do (reset! is-success true)
+                    (reset! solutions new-solutions)
+                    (reset! board (first new-solutions))))))))
 
-(defn update-sum-fn! [x y e]
-  (let [new-value (-> e .-target .-value js/parseInt)]
-    (do
-      ;;(clear!)
-      (swap! board assoc-in [y x] new-value))))
+(defn update-board-x-y! [x y new-value]
+  (swap! board assoc-in [y x] new-value))
 
-(defn square-c [x y square]
+(defn square-c [x y square update-board-fn]
   [:div.square
    {:style {:grid-column (+ x 1) :grid-row (+ y 1)}}
-   [:input {:default-value (when (not (zero? square)) square)
-            :on-change #(update-sum-fn! x y %)}]])
+   [:input {:type "text" :value (when (not (zero? square)) square)
+            :on-change #(let [new-value (->> % .-target .-value last)]
+                          (if (re-matches #"[1-9]" new-value)
+                            (update-board-x-y! x y (js/parseInt new-value))
+                            (update-board-fn x y 0)))}]])
 
 (defn main []
   (create-class
@@ -101,7 +82,7 @@
               (map-indexed
                (fn [x square]
                  ^{:key (str x y)}
-                 [square-c x y square])
+                 [square-c x y square update-board-x-y!])
                row))
             @board))]
         [:div.below-board.constrain-width
@@ -117,10 +98,10 @@
         [:div.button-indicator
          {:class [(when @is-success "is-success")
                   (when @is-no-solution "is-no-solution")
-                  (when @is-requesting "is-requesting")]}
+                  (when @is-solving "is-solving")]}
          [:button {:on-click #(when (and (false? @is-success)
                                          (false? @is-no-solution)
-                                         (false? @is-requesting))
+                                         (false? @is-solving))
                                 (solve!))}
           "solve"]]]])}))
 
