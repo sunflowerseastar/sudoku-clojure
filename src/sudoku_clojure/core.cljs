@@ -57,7 +57,7 @@
    [:input {:type "text" :value (when (not (zero? square)) square)
             :on-change #(let [new-value (->> % .-target .-value last)]
                           (if (re-matches #"[1-9]" new-value)
-                            (update-board-x-y! x y (js/parseInt new-value))
+                            (update-board-fn x y (js/parseInt new-value))
                             (update-board-fn x y 0)))}]])
 
 (defn main []
