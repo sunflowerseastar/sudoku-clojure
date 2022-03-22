@@ -37,13 +37,19 @@
   (is (= (sudoku/valid boards/broken-b3X) false)))
 
 (deftest remove-fixed-test
-  (is (= (sudoku/remove-fixed [0 3] [0])) [0])
-  (is (= (sudoku/remove-fixed [0 3] [1 2])) [1 2])
-  (is (= (sudoku/remove-fixed [0 3] [1 3 4])) [1 4]))
+  (is (= (sudoku/remove-fixed [] []) []))
+  (is (= (sudoku/remove-fixed [] [0]) [0]))
+  (is (= (sudoku/remove-fixed [] [1]) [1]))
+  (is (= (sudoku/remove-fixed [1] []) []))
+  (is (= (sudoku/remove-fixed [1 3] [0]) [0]))
+  (is (= (sudoku/remove-fixed [1 3] [1]) [1]))
+  (is (= (sudoku/remove-fixed [1 3] [1 3]) []))
+  (is (= (sudoku/remove-fixed [0 1 3] [1 2 3]) [2]))
+  (is (= (sudoku/remove-fixed [0 3] [1 3 4]) [1 4])))
 
 (deftest prune-row-test
-  (is (= (sudoku/prune-row [[0] [1 2] [3] [1 3 4] [5 6]])) [[0] [1 2] [3] [1 4] [5 6]])
-  (is (= (sudoku/prune-row [[6] [3 6] [3] [1 3 4] [4]])) [[6] [] [3] [1] [4]])
+  (is (= (sudoku/prune-row [[0] [1 2] [3] [1 3 4] [5 6]]) [[0] [1 2] [3] [1 4] [5 6]]))
+  (is (= (sudoku/prune-row [[6] [3 6] [3] [1 3 4] [4]]) [[6] [] [3] [1] [4]]))
   (is (= (sudoku/prune-row [[2] [3] [9] [1 2 3 4 5 6 7 8 9] [4] [1] [5] [6] [1 2 3 4 5 6 7 8 9]]) '([2] [3] [9] (7 8) [4] [1] [5] [6] (7 8)))))
 
 (deftest prune-test
