@@ -1,3 +1,4 @@
+/* TODO make board not "jump" after receiving solution */
 body {
   position: fixed;
   width: 100%;
@@ -112,13 +113,6 @@ body {
   flex: 1;
   position: relative;
   left: -3px;
-  opacity: 1;
-  transition: opacity 0.2s ease-in-out;
-}
-.below-board .left.is-hidden {
-  opacity: 0;
-  pointer-events: none;
-  cursor: default;
 }
 .below-board .right {
   text-align: right;
@@ -264,10 +258,10 @@ button {
   }
 }
 button:hover {
-  top: -1px;
+  background: #333;
 }
 button:active {
-  top: 0px;
+  background: #444;
 }
 .em {
   font-style: italic;
@@ -280,4 +274,8 @@ button:active {
   opacity: 0.3;
   pointer-events: none;
   cursor: default;
+}
+.is-hidden {
+  opacity: 0;
+  pointer-events: none;
 }

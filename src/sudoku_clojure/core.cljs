@@ -10,22 +10,20 @@
   (gdom/getElement "app"))
 
 (def current-board-index (atom 0))
-(def is-board-modified (atom false))
 (def board (atom (nth boards @current-board-index)))
 
 (def solutions (atom '()))
 (def current-solution-index (atom 0))
 
 ;; ui
+(def is-board-pristine (atom true))
 (def is-solving (atom false))
-(def is-no-solution (atom false))
 (def is-success (atom false))
 (def has-initially-loaded (atom true))
 
 (defn clear-ui! []
-  (do (reset! is-board-modified false)
+  (do (reset! is-board-pristine true)
       (reset! is-solving false)
-      (reset! is-no-solution false)
       (reset! solutions '())
       (reset! current-solution-index 0)
       (reset! is-success false)))
@@ -36,20 +34,24 @@
         (reset! current-board-index new-board-index)
         (reset! board (nth boards new-board-index)))))
 
+;; TODO add a multiple-solution board; wire in solution navigation
 (defn previous-or-next-solution! [dec-or-inc]
   (println "stub : previous-or-next-solution!"))
 
+;; TODO figure out error/timeout state
 (defn solve! []
   (do (reset! is-solving true)
       (let [new-solutions (solve @board)]
         (do (reset! is-solving false)
-            (if (empty? new-solutions) (reset! is-no-solution true)
-                (do (reset! is-success true)
-                    (reset! solutions new-solutions)
-                    (reset! board (first new-solutions))))))))
+            (reset! is-board-pristine true)
+            (reset! is-success true)
+            (reset! solutions new-solutions)
+            (reset! board (first new-solutions))))))
 
 (defn update-board-x-y! [x y new-value]
-  (swap! board assoc-in [y x] new-value))
+  (do
+    (reset! is-board-pristine false)
+    (swap! board assoc-in [y x] new-value)))
 
 (defn square-c [x y square update-board-fn]
   [:div.square
@@ -71,7 +73,7 @@
          [:div.left
           [:a.arrow-left {:on-click #(previous-or-next-board! dec)} "◀"]
           [:a.arrow-right {:on-click #(previous-or-next-board! inc)} "▶"]
-          [:span.em {:class (when @is-board-modified "is-dimmed")}
+          [:span.em {:class (when (not @is-board-pristine) "is-dimmed")}
            (str "board " (inc @current-board-index) " of " (count boards))]]]
         [:div.board.constrain-width
          {:style {:grid-template-rows (str "repeat(14, " (/ 100 (count @board)) "%)")}}
@@ -86,8 +88,8 @@
                row))
             @board))]
         [:div.below-board.constrain-width
-         [:div.left
-          (cond (true? @is-no-solution) [:span.em "no solutions found"]
+         [:div.left {:class (when (not @is-success) "is-hidden")}
+          (cond (empty? @solutions) [:span.em "no solutions found"]
                 (= (count @solutions) 1) [:span.em "1 solution found"]
                 (> (count @solutions) 1)
                 [:<>
@@ -97,10 +99,8 @@
        [:div.button-container
         [:div.button-indicator
          {:class [(when @is-success "is-success")
-                  (when @is-no-solution "is-no-solution")
                   (when @is-solving "is-solving")]}
          [:button {:on-click #(when (and (false? @is-success)
-                                         (false? @is-no-solution)
                                          (false? @is-solving))
                                 (solve!))}
           "solve"]]]])}))

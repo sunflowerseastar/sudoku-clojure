@@ -54,7 +54,7 @@
        (every? nodups (rows g))))
 
 ;; remove :: [Digit] -> [Digit] -> [Digit]
-;; list "subtraction" (or subtraction), sorta
+;; list "subtraction"
 (defn remove-fixed [ds xs]
   (if (= (count xs) 1) xs
       (remove #(some #{%} ds) xs)))
@@ -81,6 +81,7 @@
 ;; solve grid = filter valid . expand . choices grid
 ;; (defn solve [grid] (->> grid choices (many prune) expand (filter valid)))
 
+
 (defn span [p xs]
   (loop [[x & tail :as xs] xs acc []]
     (cond (nil? xs) [acc []]
@@ -89,6 +90,7 @@
 
 ;; -- prelude
 ;; -- break :: (a -> Bool) -> [a] -> ([a],[a])
+;; TODO swap out with split-with https://clojuredocs.org/clojure.core/split-with
 (defn break [p xs] (span (comp not p) xs))
 
 (defn counts [xs] (->> xs
