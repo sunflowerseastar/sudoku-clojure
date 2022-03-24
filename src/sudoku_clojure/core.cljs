@@ -20,7 +20,7 @@
 (def is-board-pristine (atom true))
 (def is-solving (atom false))
 (def is-success (atom false))
-(def has-initially-loaded (atom true))
+(def has-initially-loaded (atom false))
 
 (defn clear-ui! []
   (do (reset! is-board-pristine true)
@@ -67,7 +67,9 @@
 
 (defn main []
   (create-class
-   {:reagent-render
+   {:component-did-mount
+    (fn [] (js/setTimeout #(reset! has-initially-loaded true) 0))
+    :reagent-render
     (fn [this]
       [:div.main
        {:class (if @has-initially-loaded "has-initially-loaded")}
