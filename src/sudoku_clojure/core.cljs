@@ -34,9 +34,10 @@
         (reset! current-board-index new-board-index)
         (reset! board (nth boards new-board-index)))))
 
-;; TODO add a multiple-solution board; wire in solution navigation
 (defn previous-or-next-solution! [dec-or-inc]
-  (println "stub : previous-or-next-solution!"))
+  (let [new-solution-index (mod (dec-or-inc @current-solution-index) (count @solutions))]
+    (do (reset! current-solution-index new-solution-index)
+        (reset! board (nth @solutions new-solution-index)))))
 
 ;; TODO figure out error/timeout state
 (defn solve! []
