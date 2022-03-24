@@ -51,6 +51,7 @@
 
 (defn update-board-x-y! [x y new-value]
   (do
+    (clear-ui!)
     (reset! is-board-pristine false)
     (swap! board assoc-in [y x] new-value)))
 
