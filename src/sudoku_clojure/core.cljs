@@ -40,7 +40,6 @@
     (do (reset! current-solution-index new-solution-index)
         (reset! board (nth @solutions new-solution-index)))))
 
-;; TODO figure out error/timeout state
 (defn solve! []
   (do (reset! is-solving true)
       (let [new-solutions (solve @board)]
@@ -80,17 +79,19 @@
           [:span.em {:class (when (not @is-board-pristine) "is-dimmed")}
            (str "board " (inc @current-board-index) " of " (count boards))]]]
         [:div.board.constrain-width
-         {:style {:grid-template-rows (str "repeat(14, " (/ 100 (count @board)) "%)")}}
-         (let [x-shape (count (first @board))
-               y-shape (count @board)]
-           (map-indexed
-            (fn [y row]
-              (map-indexed
-               (fn [x square]
-                 ^{:key (str x y)}
-                 [square-c x y square update-board-x-y!])
-               row))
-            @board))]
+         [:div.board-inner
+          (let [x-shape (count (first @board))
+                y-shape (count @board)]
+            (map-indexed
+             (fn [y row]
+               (map-indexed
+                (fn [x square]
+                  ^{:key (str x y)}
+                  [square-c x y square update-board-x-y!])
+                row))
+             @board))
+          [:div.board-horizontal-lines " "]
+          [:div.board-vertical-lines " "]]]
         [:div.below-board.constrain-width
          [:div.left {:class (when (not @is-success) "is-hidden")}
           (cond (empty? @solutions) [:span.em "no solutions found"]
