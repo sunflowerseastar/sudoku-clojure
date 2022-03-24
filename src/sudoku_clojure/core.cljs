@@ -1,5 +1,6 @@
 (ns ^:figwheel-hooks sudoku-clojure.core
   (:require
+   [clojure.string :refer [replace-first]]
    [goog.dom :as gdom]
    [reagent.core :as reagent :refer [atom create-class]]
    [reagent.dom :as rdom]
@@ -59,7 +60,8 @@
   [:div.square
    {:style {:grid-column (+ x 1) :grid-row (+ y 1)}}
    [:input {:type "text" :value (when (not (zero? square)) square)
-            :on-change #(let [new-value (->> % .-target .-value last)]
+            :on-change #(let [;; remove old value (square) from (->> % .-target .-value)
+                              new-value (replace-first (->> % .-target .-value) (re-pattern (str square)) "")]
                           (if (re-matches #"[1-9]" new-value)
                             (update-board-fn x y (js/parseInt new-value))
                             (update-board-fn x y 0)))}]])
@@ -106,7 +108,6 @@
                                          (false? @is-solving))
                                 (solve!))}
           "solve"]]]])}))
-
 
 (defn mount-app-element []
   (when-let [el (get-app-element)]
