@@ -59,6 +59,7 @@
 (def b4 [[1 2] [3 4]])
 (def b5 [[1 2 3]  [4 5 6]  [7 8 9]])
 
+;; TODO figure out error/timeout state ... b6 and b7 hang (take a long time)
 ;; https://lisperator.net/blog/javascript-sudoku-solver/#sec-bestest
 (def b6 [[0 0 0 8 0 1 0 0 0]
          [0 0 0 0 0 0 0 4 3]
@@ -80,4 +81,4 @@
          [6 0 0 0 0 0 0 0 0]
          [7 0 0 0 0 0 5 0 0]])
 
-(def boards [b1 b3 b3b b32s b6 b7])
+(def boards [b1 b32s])

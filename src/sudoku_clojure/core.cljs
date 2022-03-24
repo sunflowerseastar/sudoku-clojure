@@ -48,7 +48,7 @@
             (reset! is-board-pristine true)
             (reset! is-success true)
             (reset! solutions new-solutions)
-            (reset! board (first new-solutions))))))
+            (when-not (empty? new-solutions) (reset! board (first new-solutions)))))))
 
 (defn update-board-x-y! [x y new-value]
   (do
