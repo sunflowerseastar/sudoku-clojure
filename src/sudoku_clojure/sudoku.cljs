@@ -119,7 +119,7 @@
                      (every? ok (boxs cm))))
 
 ;; extract :: Matrix [Digit] -> Grid
-(defn extract [matrix] (map #(map first %) matrix))
+(defn extract [matrix] (mapv #(mapv first %) matrix))
 
 (defn search [cm]
   (let [pm (prune cm)]
