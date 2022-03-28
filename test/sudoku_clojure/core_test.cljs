@@ -34,7 +34,7 @@
   (is (= (sudoku/nodups [1 2 1]) false)))
 
 (deftest valid-test
-  (is (= (sudoku/valid boards/broken-b3X) false)))
+  (is (= (sudoku/valid boards/b3X-no-solutions) false)))
 
 (deftest remove-fixed-test
   (is (= (sudoku/remove-fixed [] []) []))
