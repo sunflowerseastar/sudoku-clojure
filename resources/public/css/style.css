@@ -171,6 +171,7 @@ body {
   bottom: calc(33% - 1px);
 }
 .below-board {
+  min-height: 22px;
 }
 .below-board .left {
   flex: 1;
@@ -215,6 +216,21 @@ input {
   background: none;
   border-radius: 0;
   outline: none;
+}
+@media (min-width: 768px) {
+  input {
+    font-size: 16px;
+  }
+}
+@media (min-width: 1200px) {
+  input {
+    font-size: 18px;
+  }
+}
+@media (min-width: 1600px) {
+  input {
+    font-size: 20px;
+  }
 }
 input[type='text']:focus {
   box-shadow: none;
