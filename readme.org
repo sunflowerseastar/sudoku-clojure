@@ -1,0 +1,11 @@
+* sudoku-clojure
+
+This is a sudoku solver with a minimal UI on top. The solver logic is a translation of Richard Bird's implementation in [[https://www.cambridge.org/core/books/thinking-functionally-with-haskell/79F91D976F0C7229082325B41824EBBC#][Thinking Functionally with Haskell]]. A purescript version is [[https://github.com/sunflowerseastar/sudoku-purescript][here]].
+
+* quick start
+
+#+begin_src sh
+lein fig:build # dev - localhost:9050
+lein fig:min # build
+lein fig:test # test
+#+end_src
