@@ -107,9 +107,7 @@
         [:div.button-indicator
          {:class [(when @is-success "is-success")
                   (when @is-solving "is-solving")]}
-         [:button {:on-click #(when (and (false? @is-success)
-                                         (false? @is-solving))
-                                (solve!))}
+         [:button {:on-click #(solve!)}
           "solve"]]]])}))
 
 (defn mount-app-element []
