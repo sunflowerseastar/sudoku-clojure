@@ -20,6 +20,7 @@
 (def is-board-pristine (atom true))
 (def is-solving (atom false))
 (def is-success (atom false))
+(def is-no-solution (atom false))
 (def has-initially-loaded (atom false))
 
 (defn clear-ui! []
@@ -27,7 +28,8 @@
       (reset! is-solving false)
       (reset! solutions '())
       (reset! current-solution-index 0)
-      (reset! is-success false)))
+      (reset! is-success false)
+      (reset! is-no-solution false)))
 
 (defn previous-or-next-board! [dec-or-inc]
   (let [new-board-index (mod (dec-or-inc @current-board-index) (count boards))]
@@ -44,10 +46,14 @@
   (do (reset! is-solving true)
       (let [new-solutions (solve @board)]
         (do (reset! is-solving false)
+            (println "ns :: " new-solutions)
             (reset! is-board-pristine true)
-            (reset! is-success true)
             (reset! solutions new-solutions)
-            (when-not (empty? new-solutions) (reset! board (first new-solutions)))))))
+            (if (empty? new-solutions)
+              (reset! is-no-solution true)
+              (do
+                (reset! is-success true)
+                (reset! board (first new-solutions))))))))
 
 (defn update-board-x-y! [x y new-value]
   (do
@@ -95,7 +101,7 @@
           [:div.board-horizontal-lines " "]
           [:div.board-vertical-lines " "]]]
         [:div.below-board.constrain-width
-         [:div.left {:class (when (not @is-success) "is-hidden")}
+         [:div.left {:class (when (and (not @is-success) (not @is-no-solution)) "is-hidden")}
           (cond (empty? @solutions) [:span.em "no solutions found"]
                 (= (count @solutions) 1) [:span.em "1 solution found"]
                 (> (count @solutions) 1)
@@ -106,6 +112,7 @@
        [:div.button-container
         [:div.button-indicator
          {:class [(when @is-success "is-success")
+                  (when @is-no-solution "is-no-solution")
                   (when @is-solving "is-solving")]}
          [:button {:on-click #(solve!)}
           "solve"]]]])}))
