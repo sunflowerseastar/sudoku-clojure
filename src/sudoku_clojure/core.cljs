@@ -64,12 +64,27 @@
 (defn square-c [x y square update-board-fn]
   [:div.square
    {:style {:grid-column (+ x 1) :grid-row (+ y 1)}}
-   [:input {:type "text" :value (when (not (zero? square)) square)
-            :on-change #(let [;; remove old value (square) from (->> % .-target .-value)
-                              new-value (replace-first (->> % .-target .-value) (re-pattern (str square)) "")]
-                          (if (re-matches #"[1-9]" new-value)
-                            (update-board-fn x y (js/parseInt new-value))
-                            (update-board-fn x y 0)))}]])
+   [:input
+    {:type "text" :value (when (not (zero? square)) square)
+     :on-change
+     #(let [;; "value" means "the value of the text input field"
+            new-value-as-entered (->> % .-target .-value)
+            old-value (str square)
+            ;; if ex. there was '2' and the user pressed '5', then the new-value-as-entered would be '25'.
+            ;; In this case, remove the old value, '2', from '25'. new-value will be '5'.
+            new-value (if (> (count new-value-as-entered) (count old-value))
+                        (replace-first new-value-as-entered (re-pattern old-value) "")
+                        new-value-as-entered)
+            ;; if it's a 1 through 9, use it (as an int, not a string)
+            new-value-validated
+            (cond (re-find #"[1-9]" new-value) (js/parseInt new-value)
+                  ;; if it's blank (user pressed delete/backspace), empty it --
+                  ;; remember that 0 (as an int) is used in the logic as "all choices"
+                  (or (= new-value "") (= new-value " ")) 0
+                  ;; otherwise (user pressed alpha or other key), just leave it --
+                  ;; note that this uses 'square', not 'old-value', which is a string
+                  :else (js/parseInt square))]
+        (update-board-fn x y new-value-validated))}]])
 
 (defn main []
   (create-class
