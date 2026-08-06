@@ -7,6 +7,13 @@
  ;; Change the target directory from the "target" to "resources"
  ;; https://figwheel.org/config-options#target-dir
  :target-dir "resources"
+
+ ;; Derive the hot-reload websocket target from whatever host:port the browser
+ ;; actually used, instead of the hardcoded localhost:9500 default. Needed when
+ ;; the page is loaded through a port forward (e.g. a VM/sandbox mapping the
+ ;; guest's 9500 to a different port on the host).
+ ;; https://figwheel.org/config-options#connect-url
+ :connect-url "ws://[[client-hostname]]:[[client-port]]/figwheel-connect"
  
  ;; Server Ring Handler (optional) https://figwheel.org/docs/ring-handler.html
  ;; If you want to embed a ring handler into the figwheel server, this
