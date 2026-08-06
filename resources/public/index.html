@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <link rel="icon" href="https://clojurescript.org/images/cljs-logo-icon-32.png">
+    <script>
+      (function () {
+        try {
+          var valid = ['system', 'dark', 'light'];
+          var query = new URL(window.location.href).searchParams.get('theme');
+          var stored = window.localStorage.getItem('sudoku-clojure.theme');
+          var preference =
+            valid.indexOf(query) >= 0 ? query
+              : valid.indexOf(stored) >= 0 ? stored
+                : 'system';
+          var dark =
+            preference === 'dark' ||
+            (preference === 'system' &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        } catch (e) {
+          console.log(e);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app">

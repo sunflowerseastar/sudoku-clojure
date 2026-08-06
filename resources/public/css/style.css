@@ -1,11 +1,60 @@
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --fg: #000;
+  --bg: #fff;
+  --square-bg: #fff;
+  --board-line: #222;
+  --grid-line: #ccc;
+  --muted: #888;
+  --muted-faint: #bbb;
+  --muted-strong: #333;
+  --button-fg: #fff;
+  --button-bg: #222;
+  --button-bg-hover: #333;
+  --button-bg-active: #444;
+  --button-bg-progress: #333;
+  --button-bg-inert: #555;
+  --indicator-solving: #ccc;
+  --indicator-timeout: #ffbad1;
+  --indicator-no-solution: #ff8c94;
+  --indicator-success: #b1e597;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --fg: #e0e0e0;
+  --bg: #16181a;
+  --square-bg: #1e2124;
+  /* the outer border and the 3x3 dividers; kept well down from --fg so the
+     board's structure reads without the frame shouting on a dark page, but
+     still clearly above --grid-line so the blocks stay legible */
+  --board-line: #4f565d;
+  --grid-line: #3a3f44;
+  --muted: #888;
+  --muted-faint: #666;
+  --muted-strong: #ddd;
+  --button-fg: #16181a;
+  --button-bg: #d8d8d8;
+  --button-bg-hover: #eee;
+  --button-bg-active: #fff;
+  --button-bg-progress: #b0b0b0;
+  --button-bg-inert: #8a9096;
+  --indicator-solving: #4a5056;
+  --indicator-timeout: #7d4457;
+  --indicator-no-solution: #9e3b45;
+  --indicator-success: #4a8038;
+}
 body {
   position: fixed;
   width: 100%;
   margin: 0;
   font-family: 'iosevka ss05', Menlo, 'Andale Mono', monospace;
+  color: var(--fg);
+  background: var(--bg);
   touch-action: manipulation;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
+  transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
 }
 #app {
   height: 100vh;
@@ -21,6 +70,27 @@ body {
 }
 .main.has-initially-loaded {
   opacity: 1;
+}
+.theme-toggle {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 14px 16px;
+  line-height: 0;
+  color: var(--muted);
+  transition: color 0.4s ease-in-out;
+  cursor: pointer;
+}
+.theme-toggle .theme-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+.theme-toggle:hover {
+  color: var(--muted-strong);
+}
+.theme-toggle:active {
+  color: var(--fg);
 }
 .board-container {
   width: 90vw;
@@ -53,34 +123,34 @@ body {
   top: 3px;
   right: -5px;
   padding: 2px 8px;
-  color: #888;
+  color: var(--muted);
   transition: opacity 0.4s ease-in-out;
   cursor: pointer;
 }
 .minus:hover,
 .plus:hover {
-  color: #333;
+  color: var(--muted-strong);
 }
 .minus:active,
 .plus:active {
-  color: #000;
+  color: var(--fg);
 }
 .mode-selection {
   position: relative;
   right: -5px;
   padding: 3px 2px;
-  color: #bbb;
+  color: var(--muted-faint);
   transition: color 0.4s ease-in-out;
   cursor: pointer;
 }
 .mode-selection:hover {
-  color: #333;
+  color: var(--muted-strong);
 }
 .mode-selection:active {
-  color: #000;
+  color: var(--fg);
 }
 .mode-selection.is-selected {
-  color: #333;
+  color: var(--muted-strong);
   cursor: default;
 }
 .above-board {
@@ -113,7 +183,8 @@ body {
   width: 100%;
   margin: 0 auto;
   text-align: center;
-  border: 2px solid #222;
+  border: 2px solid var(--board-line);
+  transition: border-color 0.4s ease-in-out;
 }
 .board-inner {
   position: relative;
@@ -123,8 +194,9 @@ body {
   margin: 0 auto;
   display: grid;
   grid-gap: 1px;
-  background: #ccc;
+  background: var(--grid-line);
   text-align: center;
+  transition: background-color 0.4s ease-in-out;
 }
 .board-horizontal-lines,
 .board-vertical-lines {
@@ -141,8 +213,9 @@ body {
 .board-vertical-lines:after {
   content: '';
   position: absolute;
-  background: #222;
+  background: var(--board-line);
   z-index: 1;
+  transition: background-color 0.4s ease-in-out;
 }
 .board-horizontal-lines:before,
 .board-horizontal-lines:after {
@@ -204,7 +277,8 @@ body {
   position: relative;
   height: 0;
   padding-bottom: 100%;
-  background: white;
+  background: var(--square-bg);
+  transition: background-color 0.4s ease-in-out;
 }
 input {
   width: 90%;
@@ -213,6 +287,7 @@ input {
   border: 0;
   transform: translateX(-50%);
   text-align: center;
+  color: inherit;
   background: none;
   border-radius: 0;
   outline: none;
@@ -263,16 +338,16 @@ input[type='text']:focus {
   width: 100%;
 }
 .button-indicator.is-solving:before {
-  background: #ccc;
+  background: var(--indicator-solving);
 }
 .button-indicator.is-timeout:before {
-  background: #ffbad1;
+  background: var(--indicator-timeout);
 }
 .button-indicator.is-no-solution:before {
-  background: #ff8c94;
+  background: var(--indicator-no-solution);
 }
 .button-indicator.is-success:before {
-  background: #b1e597;
+  background: var(--indicator-success);
 }
 .button-indicator.is-solving button,
 .button-indicator.is-timeout button,
@@ -281,16 +356,16 @@ input[type='text']:focus {
   pointer-events: none;
 }
 .button-indicator.is-solving button {
-  background: #333;
+  background: var(--button-bg-progress);
   cursor: progress;
 }
 .button-indicator.is-timeout button,
 .button-indicator.is-no-solution button {
-  background: #555;
+  background: var(--button-bg-inert);
   cursor: not-allowed;
 }
 .button-indicator.is-success button {
-  background: #555;
+  background: var(--button-bg-inert);
   cursor: default;
 }
 button {
@@ -299,8 +374,8 @@ button {
   padding: 1.4em 4.6em;
   font-family: monospace;
   font-weight: bold;
-  color: white;
-  background: #222;
+  color: var(--button-fg);
+  background: var(--button-bg);
   box-shadow: none;
   border: 2px solid transparent;
   outline: none;
@@ -318,10 +393,10 @@ button {
   }
 }
 button:hover {
-  background: #333;
+  background: var(--button-bg-hover);
 }
 button:active {
-  background: #444;
+  background: var(--button-bg-active);
 }
 .em {
   font-style: italic;

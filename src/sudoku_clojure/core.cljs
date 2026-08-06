@@ -5,7 +5,8 @@
    [reagent.core :as reagent :refer [atom create-class]]
    [reagent.dom :as rdom]
    [sudoku-clojure.boards :refer [boards]]
-   [sudoku-clojure.sudoku :refer [solve]]))
+   [sudoku-clojure.sudoku :refer [solve]]
+   [sudoku-clojure.theme :as theme]))
 
 (defn get-app-element []
   (gdom/getElement "app"))
@@ -121,6 +122,7 @@
     (fn [this]
       [:div.main
        {:class (if @has-initially-loaded "has-initially-loaded")}
+       [theme/theme-toggle-c]
        [:div.board-container
         [:div.above-board.constrain-width
          [:div.left
@@ -162,6 +164,7 @@
 (defn mount-app-element []
   (when-let [el (get-app-element)]
     (rdom/render [main] el)))
+(theme/init!)
 (mount-app-element)
 
 (defn ^:after-load on-reload [] ;; reload hook
