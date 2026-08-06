@@ -1,0 +1,33 @@
+;; Production build.
+;;
+;; Deliberately separate from dev.cljs.edn rather than reusing it with an
+;; -O flag. dev.cljs.edn carries :watch-dirs, :css-dirs and :auto-testing,
+;; which are dev-server concerns; compiling the shipped artifact through it
+;; means re-checking every release that none of that tooling leaked in. This
+;; file has no figwheel options at all, so there is nothing to leak.
+;;
+;; The bundle lands in dist/, which scripts/build.sh assembles into a complete
+;; deployable directory. Intermediate compiler output is throwaway and stays
+;; under target/.
+{:main sudoku-clojure.core
+ :optimizations :advanced
+
+ :output-to "dist/cljs-out/main.js"
+ :output-dir "target/prod"
+
+ ;; not implied by :advanced -- without this, goog.DEBUG stays true and the
+ ;; dev-only branches guarded by it survive into the bundle
+ :closure-defines {goog.DEBUG false}
+
+ ;; :advanced renames anything Closure does not know about. The theme
+ ;; namespace does real interop (js/URL, .searchParams, localStorage,
+ ;; matchMedia, history.replaceState); these are all in Closure's default
+ ;; browser externs, but inferring keeps the compiler honest about anything
+ ;; added later and warns instead of silently renaming.
+ :infer-externs true
+
+ :pretty-print false
+
+ ;; no source map: it would be written next to the bundle and published by
+ ;; the deploy. Flip to a path string if you ever need to debug production.
+ :source-map false}

@@ -6,6 +6,7 @@ This is a sudoku solver with a minimal UI on top. The solver logic is a translat
 
 #+begin_src sh
 lein fig:build # dev - localhost:9050
-lein fig:min # build
-lein fig:test # test
+lein fig:min   # simple build
+lein fig:test  # test
+lein prod      # prod build (stop dev server first)
 #+end_src
